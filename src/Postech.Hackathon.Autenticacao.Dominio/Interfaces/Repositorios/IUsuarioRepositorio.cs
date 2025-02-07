@@ -16,21 +16,12 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Interfaces.Repositorios
         Usuario CadastrarUsuario(Usuario usuario);
 
         /// <summary>
-        /// Obtém um usuário pelo documento.
-        /// </summary>
-        /// <param name="documento">O documento do usuário.</param>
-        /// <param name="senha">A senha do usuário.</param>
-        /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
-        /// <returns>O usuário correspondente ao documento.</returns>
-        Usuario ObterUsuarioPeloDocumento(string documento, TipoPerfilEnumerador tipoPerfil);
-
-        /// <summary>
-        /// Obtém um usuário pelo email.
+        /// Obtém um usuário pelo email ou documento e tipo de perfil.
         /// </summary>
         /// <param name="email">O email do usuário.</param>
-        /// <param name="senha">A senha do usuário.</param>
+        /// <param name="documento">O documento do usuário.</param>
         /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
-        /// <returns>O usuário correspondente ao email.</returns>
-        Usuario ObterUsuarioPeloEmail(string email, TipoPerfilEnumerador tipoPerfil);
+        /// <returns>O usuário encontrado ou null.</returns>
+        Usuario ObterUsuarioPorEmailOuDocumento(string email, string documento, TipoPerfilEnumerador tipoPerfil);
     }
 }

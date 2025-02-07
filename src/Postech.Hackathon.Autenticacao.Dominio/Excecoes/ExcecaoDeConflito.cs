@@ -8,6 +8,12 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Excecoes
     [ExcludeFromCodeCoverage]
     public class ExcecaoDeConflito(string mensagem) : Exception(mensagem)
     {
-
+        public static void LancarQuandoVerdadeiro(bool validacao,string mensagem)
+        {
+            if (validacao)
+            {
+                throw new ExcecaoDeConflito(mensagem);
+            }
+        }
     }
 }

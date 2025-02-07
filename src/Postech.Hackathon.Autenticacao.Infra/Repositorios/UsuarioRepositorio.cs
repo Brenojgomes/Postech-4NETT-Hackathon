@@ -23,7 +23,6 @@ namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
         public UsuarioRepositorio(IMongoClient mongoClient)
         {
             _bancoDeDados = mongoClient.GetDatabase("autenticacao");
-            CriarIndices();
         }
 
         /// <summary>
@@ -54,33 +53,21 @@ namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
         }
 
         /// <summary>
-        /// Obtém um usuário pelo documento e tipo de perfil.
+        /// Obtém um usuário pelo email ou documento e tipo de perfil.
         /// </summary>
+        /// <param name="email">O email do usuário.</param>
         /// <param name="documento">O documento do usuário.</param>
         /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
         /// <returns>O usuário encontrado ou null.</returns>
-        public Usuario ObterUsuarioPeloDocumento(string documento, TipoPerfilEnumerador tipoPerfil)
+        public Usuario ObterUsuarioPorEmailOuDocumento(string email, string documento, TipoPerfilEnumerador tipoPerfil)
         {
             var colecaoUsuarios = ObterColecaoUsuarios();
             var filtro = Builders<Usuario>.Filter.And(
-                Builders<Usuario>.Filter.Eq(u => u.Documento, documento),
-                Builders<Usuario>.Filter.Eq(u => u.TipoPerfil, tipoPerfil));
-
-            return colecaoUsuarios.Find(filtro).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Obtém um usuário pelo email e tipo de perfil.
-        /// </summary>
-        /// <param name="email">O email do usuário.</param>
-        /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
-        /// <returns>O usuário encontrado ou null.</returns>
-        public Usuario ObterUsuarioPeloEmail(string email, TipoPerfilEnumerador tipoPerfil)
-        {
-            var colecaoUsuarios = ObterColecaoUsuarios();
-            var filtro = Builders<Usuario>.Filter.And(
-                Builders<Usuario>.Filter.Eq(u => u.Email, email),
-                Builders<Usuario>.Filter.Eq(u => u.TipoPerfil, tipoPerfil));
+                Builders<Usuario>.Filter.Eq(u => u.TipoPerfil, tipoPerfil),
+                Builders<Usuario>.Filter.Or(
+                    Builders<Usuario>.Filter.Eq(u => u.Email, email),
+                    Builders<Usuario>.Filter.Eq(u => u.Documento, documento)
+                ));
 
             return colecaoUsuarios.Find(filtro).FirstOrDefault();
         }
@@ -92,22 +79,6 @@ namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
         public IMongoCollection<Usuario> ObterColecaoUsuarios()
         {
             return _bancoDeDados.GetCollection<Usuario>("usuarios");
-        }
-
-        /// <summary>
-        /// Cria índices para o usuario.
-        /// </summary>
-        private void CriarIndices()
-        {
-            var colecaoUsuarios = ObterColecaoUsuarios();
-
-            var indexOptions = new CreateIndexOptions { Unique = true };
-
-            var indexKeysDocumento = Builders<Usuario>.IndexKeys.Ascending(u => u.Documento);
-            var indexKeysEmail = Builders<Usuario>.IndexKeys.Ascending(u => u.Email);
-
-            colecaoUsuarios.Indexes.CreateOne(new CreateIndexModel<Usuario>(indexKeysDocumento, indexOptions));
-            colecaoUsuarios.Indexes.CreateOne(new CreateIndexModel<Usuario>(indexKeysEmail, indexOptions));
         }
     }
 }

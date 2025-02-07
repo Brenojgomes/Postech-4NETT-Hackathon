@@ -32,14 +32,10 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao
         /// <returns>Resultado da autenticação com informações do usuário.</returns>
         public async Task<SaidaPadrao<UsuarioViewModel>> Handle(AutenticarUsuarioEntrada comando, CancellationToken cancellationToken)
         {
-            Usuario usuario = null;
-            if (!string.IsNullOrEmpty(comando.Documento))
-                usuario = _repositorio.ObterUsuarioPeloDocumento(comando.Documento, comando.TipoPerfil);
-            else if (!string.IsNullOrEmpty(comando.Email))
-                usuario = _repositorio.ObterUsuarioPeloEmail(comando.Email, comando.TipoPerfil);
-            else
+            if (string.IsNullOrEmpty(comando.Email) && string.IsNullOrEmpty(comando.Documento))
                 ExcecaoDeDominio.LancarQuando(true, "Informe o email ou documento do usuário.");
 
+            var usuario = _repositorio.ObterUsuarioPorEmailOuDocumento(comando.Email,comando.Documento, comando.TipoPerfil);
             NaoEncontradoExcecao.LancarQuandoEntidadeNula(usuario, "O usuário não foi localizado no sistema.");
 
             bool senhaValida = BCrypt.Net.BCrypt.Verify(comando.Senha, usuario.Senha);

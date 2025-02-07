@@ -14,13 +14,13 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas
         {
             this.Sucesso = sucesso;
             Mensagem = mensagem;
-            Data = data;
+            Dados = data;
         }
 
         public SaidaPadrao(bool sucesso, T data)
         {
             Sucesso = sucesso;
-            Data = data;
+            Dados = data;
         }
 
         public SaidaPadrao(bool sucesso, string mensagem)
@@ -45,7 +45,7 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas
         /// Conjunto de dados retornados do processamento solicitado.
         /// </summary>
         [JsonPropertyName("data")]
-        public T Data { get; init; }
+        public T Dados { get; init; }
     }
 
     /// <summary>
@@ -56,17 +56,17 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas
     {
         public SaidaPadrao() { }
 
-        public SaidaPadrao(bool sucesso, string mensagem, object data)
+        public SaidaPadrao(bool sucesso, string mensagem, object dados)
         {
             Sucesso = sucesso;
             Mensagem = mensagem;
-            Data = data;
+            Dados = dados;
         }
 
-        public SaidaPadrao(bool sucesso, object data)
+        public SaidaPadrao(bool sucesso, object dados)
         {
             Sucesso = sucesso;
-            Data = data;
+            Dados = dados;
         }
 
         public SaidaPadrao(bool sucesso, string mensagem)
@@ -91,6 +91,6 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas
         /// Conjunto de dados retornados do processamento solicitado.
         /// </summary>
         [JsonPropertyName("data")]
-        public object Data { get; init; }
+        public object Dados { get; init; }
     }
 }

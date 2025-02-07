@@ -3,6 +3,7 @@ using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Entradas.Autenticacao;
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas;
 using Postech.Hackathon.Autenticacao.Aplicacao.ViewModels.Autenticacao;
 using Postech.Hackathon.Autenticacao.Dominio.Entidades;
+using Postech.Hackathon.Autenticacao.Dominio.Excecoes;
 using Postech.Hackathon.Autenticacao.Dominio.Interfaces.Repositorios;
 using Postech.Hackathon.Autenticacao.Dominio.Servicos.Interfaces;
 
@@ -32,6 +33,10 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao
         public async Task<SaidaPadrao<UsuarioViewModel>> Handle(AdicionarUsuarioEntrada comando, CancellationToken cancellationToken)
         {
             var senhaCriptografada = BCrypt.Net.BCrypt.HashPassword(comando.Senha);
+
+            var existeUsuario = _repositorio.ObterUsuarioPorEmailOuDocumento(comando.Email, comando.Documento, comando.TipoPerfil);
+            ExcecaoDeConflito.LancarQuandoVerdadeiro(existeUsuario != null, "Um usuário já está cadastrado para o email ou documento informado.");
+            
 
             var usuario = new Usuario(comando.Nome, comando.Email, comando.Documento, senhaCriptografada, comando.TipoPerfil);
             _repositorio.CadastrarUsuario(usuario);
