@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using Postech.Hackathon.Autenticacao.Dominio.Entidades;
 using Postech.Hackathon.Autenticacao.Dominio.Enumeradores;
+using Postech.Hackathon.Autenticacao.Dominio.Excecoes;
 using Postech.Hackathon.Autenticacao.Dominio.Interfaces.Repositorios;
 
 namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
@@ -8,12 +9,22 @@ namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
     /// <summary>
     /// Repositório para gerenciar usuários no MongoDB.
     /// </summary>
-    public class UsuarioRepositorio(IMongoClient mongoClient) : IUsuarioRepositorio
+    public class UsuarioRepositorio : IUsuarioRepositorio
     {
         /// <summary>
         /// Banco de dados do MongoDB.
         /// </summary>
-        private readonly IMongoDatabase _bancoDeDados = mongoClient.GetDatabase("autenticacao");
+        private readonly IMongoDatabase _bancoDeDados;
+
+        /// <summary>
+        /// Construtor do repositório de usuários.
+        /// </summary>
+        /// <param name="mongoClient">Cliente do MongoDB.</param>
+        public UsuarioRepositorio(IMongoClient mongoClient)
+        {
+            _bancoDeDados = mongoClient.GetDatabase("autenticacao");
+            CriarIndices();
+        }
 
         /// <summary>
         /// Cadastra um novo usuário.
@@ -23,8 +34,23 @@ namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
         public Usuario CadastrarUsuario(Usuario usuario)
         {
             var colecaoUsuarios = ObterColecaoUsuarios();
-            colecaoUsuarios.InsertOne(usuario);
-            return usuario;
+            try
+            {
+                colecaoUsuarios.InsertOne(usuario);
+                return usuario;
+            }
+            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            {
+                if (ex.WriteError.Message.Contains("Documento"))
+                {
+                    throw new ExcecaoDeConflito("Um usuário já está cadastrado para o documento informado.");
+                }
+                else if (ex.WriteError.Message.Contains("Email"))
+                {
+                    throw new ExcecaoDeConflito("Um usuário já está cadastrado para o email informado.");
+                }
+                throw;
+            }
         }
 
         /// <summary>
@@ -66,6 +92,22 @@ namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
         public IMongoCollection<Usuario> ObterColecaoUsuarios()
         {
             return _bancoDeDados.GetCollection<Usuario>("usuarios");
+        }
+
+        /// <summary>
+        /// Cria índices para o usuario.
+        /// </summary>
+        private void CriarIndices()
+        {
+            var colecaoUsuarios = ObterColecaoUsuarios();
+
+            var indexOptions = new CreateIndexOptions { Unique = true };
+
+            var indexKeysDocumento = Builders<Usuario>.IndexKeys.Ascending(u => u.Documento);
+            var indexKeysEmail = Builders<Usuario>.IndexKeys.Ascending(u => u.Email);
+
+            colecaoUsuarios.Indexes.CreateOne(new CreateIndexModel<Usuario>(indexKeysDocumento, indexOptions));
+            colecaoUsuarios.Indexes.CreateOne(new CreateIndexModel<Usuario>(indexKeysEmail, indexOptions));
         }
     }
 }

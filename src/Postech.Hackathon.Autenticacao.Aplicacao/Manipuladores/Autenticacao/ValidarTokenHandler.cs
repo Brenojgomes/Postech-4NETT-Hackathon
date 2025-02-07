@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Entradas.Autenticacao;
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas;
-using Postech.Hackathon.Autenticacao.Aplicacao.ViewModels.Autenticacao;
 using Postech.Hackathon.Autenticacao.Dominio.Servicos.Interfaces;
 
 namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao

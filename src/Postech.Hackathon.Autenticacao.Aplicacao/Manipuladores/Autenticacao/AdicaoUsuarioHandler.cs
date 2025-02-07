@@ -3,7 +3,6 @@ using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Entradas.Autenticacao;
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas;
 using Postech.Hackathon.Autenticacao.Aplicacao.ViewModels.Autenticacao;
 using Postech.Hackathon.Autenticacao.Dominio.Entidades;
-using Postech.Hackathon.Autenticacao.Dominio.Enumeradores;
 using Postech.Hackathon.Autenticacao.Dominio.Interfaces.Repositorios;
 using Postech.Hackathon.Autenticacao.Dominio.Servicos.Interfaces;
 
@@ -32,19 +31,12 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao
         /// <returns>Resultado da operação de adição do usuário.</returns>
         public async Task<SaidaPadrao<UsuarioViewModel>> Handle(AdicionarUsuarioEntrada comando, CancellationToken cancellationToken)
         {
-            List<string> escopos = new List<string>();
-
-            if (comando.TipoPerfil == TipoPerfilEnumerador.Medico)
-                escopos.Add("medico");
-            else if (comando.TipoPerfil == TipoPerfilEnumerador.Paciente)
-                escopos.Add("paciente");
-
             var senhaCriptografada = BCrypt.Net.BCrypt.HashPassword(comando.Senha);
 
-            var usuario = new Usuario(comando.Nome, comando.Email, comando.Documento, senhaCriptografada, comando.TipoPerfil, escopos);
+            var usuario = new Usuario(comando.Nome, comando.Email, comando.Documento, senhaCriptografada, comando.TipoPerfil);
             _repositorio.CadastrarUsuario(usuario);
 
-            var token = _servicoToken.GerarToken(usuario.Nome, escopos);
+            var token = _servicoToken.GerarToken(usuario.Id, usuario.Nome, usuario.Escopos, usuario.Papeis);
 
             var usuarioViewModel = new UsuarioViewModel(usuario.Id, token);
 

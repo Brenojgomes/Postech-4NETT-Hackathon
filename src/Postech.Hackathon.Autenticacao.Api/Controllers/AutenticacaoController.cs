@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Entradas.Autenticacao;
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas;
@@ -10,7 +11,7 @@ namespace Postech.Hackathon.Autenticacao.Api.Controllers
     /// <summary>
     /// Controlador responsável pela autenticação de usuários e serviços.
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("v1/[controller]")]
     [ApiController]
     public class AutenticacaoController : ControllerBase
     {
@@ -27,6 +28,7 @@ namespace Postech.Hackathon.Autenticacao.Api.Controllers
         /// <param name="comando">Dados do usuário a ser adicionado.</param>
         /// <returns>Resultado da operação de adição do usuário.</returns>
         [HttpPost("usuarios")]
+        [Authorize(Roles = "servico-interno")]
         public async Task<SaidaPadrao<UsuarioViewModel>> Usuarios([FromBody] AdicionarUsuarioEntrada comando)
         {
             var teste = await _mediator.Send(comando);
@@ -39,6 +41,7 @@ namespace Postech.Hackathon.Autenticacao.Api.Controllers
         /// <param name="comando">Dados de autenticação do usuário.</param>
         /// <returns>Resultado da operação de autenticação do usuário.</returns>
         [HttpPost("autenticacoes-usuarios")]
+        [Authorize(Roles = "servico-interno")]
         public async Task<SaidaPadrao<UsuarioViewModel>> AutenticarUsuario([FromBody] AutenticarUsuarioEntrada comando)
         {
             var teste = await _mediator.Send(comando);
@@ -55,7 +58,6 @@ namespace Postech.Hackathon.Autenticacao.Api.Controllers
         {
             return await _mediator.Send(comando);
         }
-
 
         /// <summary>
         ///  Validação de token

@@ -1,14 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Postech.Hackathon.Autenticacao.Dominio.Entidades;
 using Postech.Hackathon.Autenticacao.Dominio.Servicos.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Postech.Hackathon.Autenticacao.Dominio.Servicos
 {
@@ -29,14 +24,16 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Servicos
         }
 
         /// <summary>
-        /// Gera um token JWT com base no nome e nos escopos fornecidos.
+        /// Gera um token com base no nome e nos escopos fornecidos.
         /// </summary>
-        /// <param name="name">Nome do usuário.</param>
-        /// <param name="escopos">Lista de escopos do usuário.</param>
-        /// <returns>Token JWT gerado.</returns>
-        public string GerarToken(string name, List<string> escopos)
+        /// <param name="id">id do usuario para o qual o token será gerado.</param>
+        /// <param name="name">Nome para o qual o token será gerado.</param>
+        /// <param name="escopos">Lista de escopos associados ao token.</param>
+        /// <param name="escopos">Lista de papeis associados ao token.</param>
+        /// <returns>Token gerado como uma string.</returns>
+        public string GerarToken(Guid id, string name, List<string> escopos, List<string> papeis)
         {
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
 
@@ -44,10 +41,12 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Servicos
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, name)
+                new Claim(ClaimTypes.Name, name),
+                new Claim("Id", id.ToString()),
             };
 
             claims.AddRange(escopos.Select(escopo => new Claim(ClaimTypes.Role, escopo)));
+            claims.AddRange(papeis.Select(papeis => new Claim("Papel", papeis)));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -68,7 +67,7 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Servicos
         public bool ValidarToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
 

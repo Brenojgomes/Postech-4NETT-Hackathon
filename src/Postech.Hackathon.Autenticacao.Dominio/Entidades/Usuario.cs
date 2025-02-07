@@ -38,18 +38,62 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Entidades
         public TipoPerfilEnumerador TipoPerfil { get; private set; }
 
         /// <summary>
+        /// Lista de papeis associados ao usuário.
+        /// </summary>
+        public List<string> Papeis { get; private set; }
+
+        /// <summary>
         /// Lista de escopos associados ao usuário.
         /// </summary>
         public List<string> Escopos { get; private set; }
 
-        public Usuario(string nome, string email, string documento, string senha, TipoPerfilEnumerador tipoPerfil, List<string> escopos)
+        public Usuario(string nome, string email, string documento, string senha, TipoPerfilEnumerador tipoPerfil)
         {
             Nome = nome;
             Email = email;
             Documento = documento;
             Senha = senha;
             TipoPerfil = tipoPerfil;
-            Escopos = escopos;
+            Escopos = CadastrarEscopos(tipoPerfil);
+            Papeis = CadastrarPapeis(tipoPerfil);
+        }
+
+        /// <summary>
+        /// Cadastro de escopos de acordo com o tipo de perfil do usuário.
+        /// </summary>
+        public List<string> CadastrarEscopos(TipoPerfilEnumerador tipoPerfil)
+        {
+            List<string> escopos = new List<string>();
+            switch (tipoPerfil)
+            {
+                case TipoPerfilEnumerador.Medico:
+                    escopos.Add("medico.read");
+                    escopos.Add("medico.write");
+                    break;
+                case TipoPerfilEnumerador.Paciente:
+                    escopos.Add("paciente.read");
+                    escopos.Add("paciente.write");
+                    break;
+            }
+            return escopos;
+        }
+
+        /// <summary>
+        /// Cadastro de papeis de acordo com o tipo de perfil do usuário.
+        /// </summary>
+        public List<string> CadastrarPapeis(TipoPerfilEnumerador tipoPerfil)
+        {
+            List<string> papeis = new List<string>();
+            switch (tipoPerfil)
+            {
+                case TipoPerfilEnumerador.Medico:
+                    papeis.Add("medico");
+                    break;
+                case TipoPerfilEnumerador.Paciente:
+                    papeis.Add("paciente");
+                    break;
+            }
+            return papeis;  
         }
     }
 }

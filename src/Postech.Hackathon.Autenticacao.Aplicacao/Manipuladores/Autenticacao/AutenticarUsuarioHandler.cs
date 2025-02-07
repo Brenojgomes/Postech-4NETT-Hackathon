@@ -3,6 +3,7 @@ using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Entradas.Autenticacao;
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas;
 using Postech.Hackathon.Autenticacao.Aplicacao.ViewModels.Autenticacao;
 using Postech.Hackathon.Autenticacao.Dominio.Entidades;
+using Postech.Hackathon.Autenticacao.Dominio.Excecoes;
 using Postech.Hackathon.Autenticacao.Dominio.Interfaces.Repositorios;
 using Postech.Hackathon.Autenticacao.Dominio.Servicos.Interfaces;
 
@@ -31,22 +32,21 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao
         /// <returns>Resultado da autenticação com informações do usuário.</returns>
         public async Task<SaidaPadrao<UsuarioViewModel>> Handle(AutenticarUsuarioEntrada comando, CancellationToken cancellationToken)
         {
-            Usuario usuario;
+            Usuario usuario = null;
             if (!string.IsNullOrEmpty(comando.Documento))
                 usuario = _repositorio.ObterUsuarioPeloDocumento(comando.Documento, comando.TipoPerfil);
             else if (!string.IsNullOrEmpty(comando.Email))
                 usuario = _repositorio.ObterUsuarioPeloEmail(comando.Email, comando.TipoPerfil);
             else
-                throw new Exception("Informe o email ou documento do usuário.");
+                ExcecaoDeDominio.LancarQuando(true, "Informe o email ou documento do usuário.");
 
-            if (usuario == null)
-                throw new Exception("Usuário não encontrado.");
+            NaoEncontradoExcecao.LancarQuandoEntidadeNula(usuario, "O usuário não foi localizado no sistema.");
 
             bool senhaValida = BCrypt.Net.BCrypt.Verify(comando.Senha, usuario.Senha);
             if (!senhaValida)
-                throw new Exception("Credenciais inválidas.");
+                throw new UnauthorizedAccessException("Credenciais inválidas.");
 
-            var token = _servicoToken.GerarToken(usuario.Nome, usuario.Escopos);
+            var token = _servicoToken.GerarToken(usuario.Id, usuario.Nome, usuario.Escopos, usuario.Papeis);
 
             var usuarioViewModel = new UsuarioViewModel(usuario.Id, token);
 

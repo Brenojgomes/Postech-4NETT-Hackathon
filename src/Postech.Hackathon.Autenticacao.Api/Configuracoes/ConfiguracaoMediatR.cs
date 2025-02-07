@@ -8,7 +8,7 @@ namespace Postech.Hackathon.Autenticacao.Api.Configuracoes
         /// <summary>
         /// Adiciona os serviços MediatR à coleção de serviços especificada.
         /// </summary>
-        public static void AdicionaMediatR(this IServiceCollection services)
+        public static void AdicionarMediatR(this IServiceCollection services)
         {
             ArgumentNullException.ThrowIfNull(services);
             services.AddMediatR(cfg =>

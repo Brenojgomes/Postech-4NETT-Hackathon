@@ -2,6 +2,7 @@
 using Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Saidas;
 using Postech.Hackathon.Autenticacao.Aplicacao.ViewModels.Autenticacao;
 using Postech.Hackathon.Autenticacao.Dominio.Enumeradores;
+using System.ComponentModel.DataAnnotations;
 
 namespace Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Entradas.Autenticacao
 {
@@ -23,11 +24,13 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Comandos.Entradas.Autenticaca
         /// <summary>
         /// Senha do usuário.
         /// </summary>
+        [Required(ErrorMessage = "O campo Senha é obrigatório.")]
         public string Senha { get; set; }
 
         /// <summary>
         /// Tipo de perfil do usuário.
         /// </summary>
+        [Required(ErrorMessage = "O campo TipoPerfil é obrigatório.")]
         public TipoPerfilEnumerador TipoPerfil { get; set; }
     }
 }

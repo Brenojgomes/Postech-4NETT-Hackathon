@@ -21,6 +21,11 @@
         public string ClientSecret { get; set; }
 
         /// <summary>
+        /// Lista de papeis associados ao serviço.
+        /// </summary>
+        public List<string> Papeis { get; set; }
+
+        /// <summary>
         /// Lista de escopos associados ao serviço.
         /// </summary>
         public List<string> Escopos { get; set; }

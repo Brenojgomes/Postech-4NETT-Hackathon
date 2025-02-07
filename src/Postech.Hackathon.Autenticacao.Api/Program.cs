@@ -1,32 +1,34 @@
-using Microsoft.Extensions.DependencyInjection;
 using Postech.Hackathon.Autenticacao.Api.Configuracoes;
 using Postech.Hackathon.Autenticacao.Infra.Configuracoes;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 
-// Add services to the container.
-
+builder.Services.AdicionarConfiguracaoDeAutenticacao(builder.Configuration);
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AdicionarInfraestrutura();
 builder.Services.AdicionarDependenciasServicos();
 builder.Services.AdicionarDependenciaManipuladores();
-builder.Services.AdicionaMediatR();
-builder.Services.AddSwaggerGen();
+builder.Services.AdicionarMediatR();
+builder.Services.AdicionarConfiguracaoSwagger();
 
 var app = builder.Build();
+app.UsarManipuladorExcecoesPersonalizado();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Postech.Hackathon.Autenticacao.Api v1");
+    });
 }
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
