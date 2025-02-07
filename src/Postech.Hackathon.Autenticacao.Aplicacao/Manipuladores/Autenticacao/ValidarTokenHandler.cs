@@ -21,9 +21,10 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao
         public async Task<SaidaPadrao> Handle(ValidarTokenEntrada comando, CancellationToken cancellationToken)
         {
             var tokenValido = _servicoToken.ValidarToken(comando.Token);
-            string mensagem = tokenValido ? "O token foi validado com sucesso." : " O token está inválido";
+            if(!tokenValido)
+                throw new UnauthorizedAccessException("O token está inválido");
 
-            return new SaidaPadrao(tokenValido, mensagem);
+            return new SaidaPadrao(tokenValido, "O token foi validado com sucesso.");
         }
     }
 }

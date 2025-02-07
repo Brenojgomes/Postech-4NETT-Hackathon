@@ -2,6 +2,7 @@ using Postech.Hackathon.Autenticacao.Api.Configuracoes;
 using Postech.Hackathon.Autenticacao.Infra.Configuracoes;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://*:5010");
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 
 builder.Services.AdicionarConfiguracaoDeAutenticacao(builder.Configuration);
