@@ -39,7 +39,9 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao
             else if (comando.TipoPerfil == TipoPerfilEnumerador.Paciente)
                 escopos.Add("paciente");
 
-            var usuario = new Usuario(comando.Nome, comando.Email, comando.Documento, comando.Senha, comando.TipoPerfil, escopos);
+            var senhaCriptografada = BCrypt.Net.BCrypt.HashPassword(comando.Senha);
+
+            var usuario = new Usuario(comando.Nome, comando.Email, comando.Documento, senhaCriptografada, comando.TipoPerfil, escopos);
             _repositorio.CadastrarUsuario(usuario);
 
             var token = _servicoToken.GerarToken(usuario.Nome, escopos);

@@ -12,5 +12,11 @@
         /// <param name="escopos">Lista de escopos associados ao token.</param>
         /// <returns>Token gerado como uma string.</returns>
         string GerarToken(string name, List<string> escopos);
+
+        /// <summary>
+        /// Verifica se o token é válido.
+        /// </summary>
+        /// <param name="token">JWT Token</param>
+        bool ValidarToken(string token);
     }
 }

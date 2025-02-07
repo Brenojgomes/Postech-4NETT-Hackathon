@@ -32,12 +32,19 @@ namespace Postech.Hackathon.Autenticacao.Aplicacao.Manipuladores.Autenticacao
         public async Task<SaidaPadrao<UsuarioViewModel>> Handle(AutenticarUsuarioEntrada comando, CancellationToken cancellationToken)
         {
             Usuario usuario;
-            if (string.IsNullOrEmpty(comando.Documento))
-                usuario = _repositorio.ObterUsuarioPeloDocumento(comando.Documento, comando.Senha, comando.TipoPerfil);
-            else if (string.IsNullOrEmpty(comando.Email))
-                usuario = _repositorio.ObterUsuarioPeloDocumento(comando.Email, comando.Senha, comando.TipoPerfil);
+            if (!string.IsNullOrEmpty(comando.Documento))
+                usuario = _repositorio.ObterUsuarioPeloDocumento(comando.Documento, comando.TipoPerfil);
+            else if (!string.IsNullOrEmpty(comando.Email))
+                usuario = _repositorio.ObterUsuarioPeloEmail(comando.Email, comando.TipoPerfil);
             else
                 throw new Exception("Informe o email ou documento do usuário.");
+
+            if (usuario == null)
+                throw new Exception("Usuário não encontrado.");
+
+            bool senhaValida = BCrypt.Net.BCrypt.Verify(comando.Senha, usuario.Senha);
+            if (!senhaValida)
+                throw new Exception("Credenciais inválidas.");
 
             var token = _servicoToken.GerarToken(usuario.Nome, usuario.Escopos);
 

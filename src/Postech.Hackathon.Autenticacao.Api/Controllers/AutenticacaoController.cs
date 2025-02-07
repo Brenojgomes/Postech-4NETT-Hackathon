@@ -53,8 +53,19 @@ namespace Postech.Hackathon.Autenticacao.Api.Controllers
         [HttpPost("autenticacoes-servicos")]
         public async Task<SaidaPadrao<ServicoViewModel>> AutenticarServico([FromBody] AutenticarServicoEntrada comando)
         {
-            var teste = await _mediator.Send(comando);
-            return teste;
+            return await _mediator.Send(comando);
+        }
+
+
+        /// <summary>
+        ///  Validação de token
+        /// </summary>
+        /// <param name="comando"></param>
+        /// <returns>Retorna se o token está válido.</returns>
+        [HttpPost("validacoes-tokens")]
+        public async Task<SaidaPadrao> ValidacaoToken([FromBody] ValidarTokenEntrada comando)
+        {
+            return await _mediator.Send(comando);
         }
     }
 }

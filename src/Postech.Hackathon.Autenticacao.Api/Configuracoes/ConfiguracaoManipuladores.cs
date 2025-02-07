@@ -20,6 +20,10 @@ namespace Postech.Hackathon.Autenticacao.Api.Configuracoes
 
             //Servicos
             services.AddScoped<IRequestHandler<AutenticarServicoEntrada, SaidaPadrao<ServicoViewModel>>, AutenticarServicoHandler>();
+
+            //Tokens
+            services.AddScoped<IRequestHandler<ValidarTokenEntrada, SaidaPadrao>, ValidarTokenHandler>();
+
             return services;
         }
     }

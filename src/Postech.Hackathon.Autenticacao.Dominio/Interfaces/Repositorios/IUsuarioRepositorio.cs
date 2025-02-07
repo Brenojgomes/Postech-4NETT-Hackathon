@@ -22,7 +22,7 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Interfaces.Repositorios
         /// <param name="senha">A senha do usuário.</param>
         /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
         /// <returns>O usuário correspondente ao documento.</returns>
-        Usuario ObterUsuarioPeloDocumento(string documento, string senha, TipoPerfilEnumerador tipoPerfil);
+        Usuario ObterUsuarioPeloDocumento(string documento, TipoPerfilEnumerador tipoPerfil);
 
         /// <summary>
         /// Obtém um usuário pelo email.
@@ -31,6 +31,6 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Interfaces.Repositorios
         /// <param name="senha">A senha do usuário.</param>
         /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
         /// <returns>O usuário correspondente ao email.</returns>
-        Usuario ObterUsuarioPeloEmail(string email, string senha, TipoPerfilEnumerador tipoPerfil);
+        Usuario ObterUsuarioPeloEmail(string email, TipoPerfilEnumerador tipoPerfil);
     }
 }

@@ -28,36 +28,32 @@ namespace Postech.Hackathon.Autenticacao.Infra.Repositorios
         }
 
         /// <summary>
-        /// Obtém um usuário pelo documento, senha e tipo de perfil.
+        /// Obtém um usuário pelo documento e tipo de perfil.
         /// </summary>
         /// <param name="documento">O documento do usuário.</param>
-        /// <param name="senha">A senha do usuário.</param>
         /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
         /// <returns>O usuário encontrado ou null.</returns>
-        public Usuario ObterUsuarioPeloDocumento(string documento, string senha, TipoPerfilEnumerador tipoPerfil)
+        public Usuario ObterUsuarioPeloDocumento(string documento, TipoPerfilEnumerador tipoPerfil)
         {
             var colecaoUsuarios = ObterColecaoUsuarios();
             var filtro = Builders<Usuario>.Filter.And(
                 Builders<Usuario>.Filter.Eq(u => u.Documento, documento),
-                Builders<Usuario>.Filter.Eq(u => u.Senha, senha),
                 Builders<Usuario>.Filter.Eq(u => u.TipoPerfil, tipoPerfil));
 
             return colecaoUsuarios.Find(filtro).FirstOrDefault();
         }
 
         /// <summary>
-        /// Obtém um usuário pelo email, senha e tipo de perfil.
+        /// Obtém um usuário pelo email e tipo de perfil.
         /// </summary>
         /// <param name="email">O email do usuário.</param>
-        /// <param name="senha">A senha do usuário.</param>
         /// <param name="tipoPerfil">O tipo de perfil do usuário.</param>
         /// <returns>O usuário encontrado ou null.</returns>
-        public Usuario ObterUsuarioPeloEmail(string email, string senha, TipoPerfilEnumerador tipoPerfil)
+        public Usuario ObterUsuarioPeloEmail(string email, TipoPerfilEnumerador tipoPerfil)
         {
             var colecaoUsuarios = ObterColecaoUsuarios();
             var filtro = Builders<Usuario>.Filter.And(
                 Builders<Usuario>.Filter.Eq(u => u.Email, email),
-                Builders<Usuario>.Filter.Eq(u => u.Senha, senha),
                 Builders<Usuario>.Filter.Eq(u => u.TipoPerfil, tipoPerfil));
 
             return colecaoUsuarios.Find(filtro).FirstOrDefault();
