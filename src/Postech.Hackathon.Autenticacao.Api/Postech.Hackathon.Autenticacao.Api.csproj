@@ -9,12 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\Postech.Hackathon.Autenticacao.Aplicacao\Postech.Hackathon.Autenticacao.Aplicacao.csproj" />
+    <ProjectReference Include="..\Postech.Hackathon.Autenticacao.Dominio\Postech.Hackathon.Autenticacao.Dominio.csproj" />
+    <ProjectReference Include="..\Postech.Hackathon.Autenticacao.Infra\Postech.Hackathon.Autenticacao.Infra.csproj" />
   </ItemGroup>
 
 </Project>
