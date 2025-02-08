@@ -69,10 +69,14 @@ namespace Postech.Hackathon.Autenticacao.Dominio.Entidades
                 case TipoPerfilEnumerador.Medico:
                     escopos.Add("medico.read");
                     escopos.Add("medico.write");
+                    escopos.Add("medico_agendamento.write");
+
                     break;
                 case TipoPerfilEnumerador.Paciente:
                     escopos.Add("paciente.read");
                     escopos.Add("paciente.write");
+                    escopos.Add("paciente_agendamento.read");
+                    escopos.Add("paciente_agendamento.write");
                     break;
             }
             return escopos;
