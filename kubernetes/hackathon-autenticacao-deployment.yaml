@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: container-hackathon-autenticacao
-          image: lruizd/techchallenge-dotnet-contactintegration:latest
+          image: brenojgomes/hackathon-autenticacao:latest
           ports:
             - containerPort: 5010         
           env:

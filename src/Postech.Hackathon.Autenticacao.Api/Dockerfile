@@ -1,18 +1,26 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 5010
+ENV ASPNETCORE_URLS=http://+:5010
 ENV ASPNETCORE_HTTP_PORTS=5010
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG configuration=Release
 WORKDIR /src
+COPY ["src/Postech.Hackathon.Autenticacao.Api/Postech.Hackathon.Autenticacao.Api.csproj", "src/Postech.Hackathon.Autenticacao.Api/"]
+RUN dotnet restore "src/Postech.Hackathon.Autenticacao.Api/Postech.Hackathon.Autenticacao.Api.csproj"
 COPY . .
-RUN dotnet restore src/Postech.Hackathon.Autenticacao.Api/Postech.Hackathon.Autenticacao.Api.csproj
-RUN dotnet publish src/Postech.Hackathon.Autenticacao.Api/Postech.Hackathon.Autenticacao.Api.csproj -c Release -o /app/publish --no-restore
+WORKDIR "/src/src/Postech.Hackathon.Autenticacao.Api"
+RUN dotnet build "Postech.Hackathon.Autenticacao.Api.csproj" -c "$configuration" -o /app/build
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM build AS publish
+ARG configuration=Release
+RUN dotnet publish "Postech.Hackathon.Autenticacao.Api.csproj" \
+    -c "$configuration" \
+    -o /app/publish \
+    /p:UseAppHost=false
+
+FROM base AS final
 WORKDIR /app
-COPY --from=build /app/publish .
-
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Postech.Hackathon.Autenticacao.Api.dll"]

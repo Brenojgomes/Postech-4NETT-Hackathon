@@ -59,13 +59,6 @@ spec:
           ports:
             - name: "db-port"
               containerPort: 27017
-          livenessProbe:
-            tcpSocket:
-              port: 27017
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
@@ -92,13 +85,11 @@ metadata:
   labels:
     app: mongo-db
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - name: db-port
       port: 27017
       targetPort: 27017
-    - name: exporter-port
-      port: 9216
-      targetPort: 9216
+      nodePort: 31002
   selector:
     app: mongo-db
