@@ -1,0 +1,6 @@
+@Postech.Hackathon.Autenticacao.Api_HostAddress = http://localhost:5089
+
+GET {{Postech.Hackathon.Autenticacao.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
